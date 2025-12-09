@@ -40,7 +40,7 @@ jobs:
         working-directory: partie-3
 
       - name: Run unit tests
-        run: npm run test:unit -- --run
+        run: npm run test -- --run
         working-directory: partie-3
 
   e2e-smoke:
