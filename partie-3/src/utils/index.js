@@ -1,8 +1,6 @@
-export const cleanString = (string) =>
-    string
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/\p{Diacritic}/gu, "");
+export const cleanString = (string) => {
+    return String(string).toLowerCase();
+};
 
 export const clearTagContent = (tag) => {
     while (tag.firstChild) {
