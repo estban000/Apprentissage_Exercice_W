@@ -1,1 +1,131 @@
+name: CI
 
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint JavaScript
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+  unit-tests:
+    name: Unit tests (Vitest)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:unit -- --run
+
+  e2e-smoke:
+    name: Playwright smoke tests
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run smoke tests
+        run: |
+          npx playwright test --project=chromium --grep @smoke
+
+  e2e-full:
+    name: Full e2e tests (fail-fast strategy)
+    runs-on: ubuntu-latest
+    needs: e2e-smoke
+    if: success()    # si smoke tests OK
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Run all e2e tests
+        run: |
+          npx playwright test --project=chromium
+
+  build:
+    name: Build Vite + inject env vars
+    runs-on: ubuntu-latest
+    needs: e2e-full
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Inject build env vars
+        run: |
+          echo "VITE_BUILD_ACTOR=${{ github.actor }}" >> .env
+          echo "VITE_BUILD_TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')" >> .env
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Save SSH key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > deploy_key
+          chmod 400 deploy_key
+
+      - name: Deploy via rsync
+        run: |
+          rsync -Pav -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
+            dist/ ${{ secrets.USER }}@${{ secrets.SERVER }}:/var/www/html/
