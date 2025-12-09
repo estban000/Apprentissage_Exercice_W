@@ -66,10 +66,6 @@ export const getEvolutionChain = (
     let evolutionLine = Object.values(evolutionLineTranslated)
         .filter(Boolean)
         .flat();
-    // evolutionLine = evolutionLine.map((item, idx) => ({
-    //     ...item,
-    //     condition: evolutionLine[idx - 1]?.condition || item.condition,
-    // }))
 
     let res = [];
     const listPokemonComputed = listPokemon.map((item) => ({
@@ -145,30 +141,12 @@ export const getEvolutionChain = (
 };
 
 export const statistics = {
-    hp: {
-        name: "PV",
-        color: "rgb(132 204 22)",
-    },
-    attack: {
-        name: "Attaque",
-        color: "rgb(45 212 191)",
-    },
-    defense: {
-        name: "Défense",
-        color: "rgb(96 165 250)",
-    },
-    "special-attack": {
-        name: "Attaque Spéciale",
-        color: "rgb(251 146 60)",
-    },
-    "special-defense": {
-        name: "Défense Spéciale",
-        color: "rgb(250 204 21)",
-    },
-    speed: {
-        name: "Vitesse",
-        color: "rgb(192 132 252)",
-    },
+    hp: { name: "PV", color: "rgb(132 204 22)" },
+    attack: { name: "Attaque", color: "rgb(45 212 191)" },
+    defense: { name: "Défense", color: "rgb(96 165 250)" },
+    "special-attack": { name: "Attaque Spéciale", color: "rgb(251 146 60)" },
+    "special-defense": { name: "Défense Spéciale", color: "rgb(250 204 21)" },
+    speed: { name: "Vitesse", color: "rgb(192 132 252)" },
 };
 
 export const debounce = (callback, wait) => {
@@ -191,40 +169,44 @@ export const onTransitionsEnded = (node) => {
     );
 };
 
-export const modal = document.querySelector("[data-pokemon-modal]");
-
-export const modal_DOM = {
-    pkmnName: modal.querySelector("h2"),
-    img: modal.querySelector("img"),
-    category: modal.querySelector("[data-category]"),
-    listTypes: modal.querySelector("[data-list-types]"),
-    listSensibilities: modal.querySelector("[data-list-sensibilities]"),
-    listEvolutions: modal.querySelector("[data-list-evolutions]"),
-    extraEvolutions: modal.querySelector("[data-extra-evolutions]"),
-    sexMaleBarContainer: modal.querySelector("[data-sex='male']"),
-    sexAsexualBarContainer: modal.querySelector("[data-sex='asexual']"),
-    sexFemaleBarContainer: modal.querySelector("[data-sex='female']"),
-    sexRateMale: modal.querySelectorAll("[data-sex-rate='male']"),
-    sexRateFemale: modal.querySelectorAll("[data-sex-rate='female']"),
-    sexLabelFemale: modal.querySelectorAll("[data-sex-label='female']"),
-    sexLabelMale: modal.querySelectorAll("[data-sex-label='male']"),
-    height: modal.querySelector("[data-weight]"),
-    weight: modal.querySelector("[data-height]"),
-    listAbilities: modal.querySelector("[data-list-abilities]"),
-    listGames: modal.querySelector("[data-list-games]"),
-    nbGames: modal.querySelector("[data-nb-games]"),
-    nbRegionalForms: modal.querySelector("[data-nb-regional-forms]"),
-    listRegionalForms: modal.querySelector("[data-list-regional-forms]"),
-    nbForms: modal.querySelector("[data-nb-forms]"),
-    listForms: modal.querySelector("[data-list-forms]"),
-    spritesContainer: modal.querySelector("[data-sprites-container]"),
-    topInfos: modal.querySelector("[data-top-infos]"),
-    listSiblings: modal.querySelector("[data-list-siblings-pokemon]"),
-    statistics: modal.querySelector("[data-statistics]"),
-    catchRate: modal.querySelector("[data-catch-rate]"),
-    acronymVersions: modal.querySelector("[data-pkmn-acronym-versions]"),
-    noEvolutionsText: modal.querySelector("[data-no-evolutions]"),
-    listTogglePip: modal.querySelectorAll("[data-toggle-picture-in-picture]"),
+// --- Modal DOM ---
+// Fonction pour récupérer le modal au moment de l'appel
+export const getModalDOM = () => {
+    const modal = document.querySelector("[data-pokemon-modal]");
+    if (!modal) return null;
+    return {
+        pkmnName: modal.querySelector("h2"),
+        img: modal.querySelector("img"),
+        category: modal.querySelector("[data-category]"),
+        listTypes: modal.querySelector("[data-list-types]"),
+        listSensibilities: modal.querySelector("[data-list-sensibilities]"),
+        listEvolutions: modal.querySelector("[data-list-evolutions]"),
+        extraEvolutions: modal.querySelector("[data-extra-evolutions]"),
+        sexMaleBarContainer: modal.querySelector("[data-sex='male']"),
+        sexAsexualBarContainer: modal.querySelector("[data-sex='asexual']"),
+        sexFemaleBarContainer: modal.querySelector("[data-sex='female']"),
+        sexRateMale: modal.querySelectorAll("[data-sex-rate='male']"),
+        sexRateFemale: modal.querySelectorAll("[data-sex-rate='female']"),
+        sexLabelFemale: modal.querySelectorAll("[data-sex-label='female']"),
+        sexLabelMale: modal.querySelectorAll("[data-sex-label='male']"),
+        height: modal.querySelector("[data-weight]"),
+        weight: modal.querySelector("[data-height]"),
+        listAbilities: modal.querySelector("[data-list-abilities]"),
+        listGames: modal.querySelector("[data-list-games]"),
+        nbGames: modal.querySelector("[data-nb-games]"),
+        nbRegionalForms: modal.querySelector("[data-nb-regional-forms]"),
+        listRegionalForms: modal.querySelector("[data-list-regional-forms]"),
+        nbForms: modal.querySelector("[data-nb-forms]"),
+        listForms: modal.querySelector("[data-list-forms]"),
+        spritesContainer: modal.querySelector("[data-sprites-container]"),
+        topInfos: modal.querySelector("[data-top-infos]"),
+        listSiblings: modal.querySelector("[data-list-siblings-pokemon]"),
+        statistics: modal.querySelector("[data-statistics]"),
+        catchRate: modal.querySelector("[data-catch-rate]"),
+        acronymVersions: modal.querySelector("[data-pkmn-acronym-versions]"),
+        noEvolutionsText: modal.querySelector("[data-no-evolutions]"),
+        listTogglePip: modal.querySelectorAll("[data-toggle-picture-in-picture]"),
+    };
 };
 
 export * from "./colors";
