@@ -18,9 +18,11 @@ jobs:
 
       - name: Install deps
         run: npm ci
+        working-directory: partie-3
 
       - name: Run ESLint
         run: npm run lint
+        working-directory: partie-3
 
   unit-tests:
     name: Unit tests (Vitest)
@@ -35,9 +37,11 @@ jobs:
 
       - name: Install deps
         run: npm ci
+        working-directory: partie-3
 
       - name: Run unit tests
         run: npm run test:unit -- --run
+        working-directory: partie-3
 
   e2e-smoke:
     name: Playwright smoke tests
@@ -52,19 +56,21 @@ jobs:
 
       - name: Install deps
         run: npm ci
+        working-directory: partie-3
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        working-directory: partie-3
 
       - name: Run smoke tests
-        run: |
-          npx playwright test --project=chromium --grep @smoke
+        run: npx playwright test --project=chromium --grep @smoke
+        working-directory: partie-3
 
   e2e-full:
     name: Full e2e tests (fail-fast strategy)
     runs-on: ubuntu-latest
     needs: e2e-smoke
-    if: success()    # si smoke tests OK
+    if: success()
     steps:
       - uses: actions/checkout@v4
 
@@ -74,13 +80,15 @@ jobs:
 
       - name: Install deps
         run: npm ci
+        working-directory: partie-3
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
+        working-directory: partie-3
 
       - name: Run all e2e tests
-        run: |
-          npx playwright test --project=chromium
+        run: npx playwright test --project=chromium
+        working-directory: partie-3
 
   build:
     name: Build Vite + inject env vars
@@ -95,20 +103,23 @@ jobs:
 
       - name: Install deps
         run: npm ci
+        working-directory: partie-3
 
       - name: Inject build env vars
         run: |
           echo "VITE_BUILD_ACTOR=${{ github.actor }}" >> .env
           echo "VITE_BUILD_TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')" >> .env
+        working-directory: partie-3
 
       - name: Build project
         run: npm run build
+        working-directory: partie-3
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist
+          path: partie-3/dist
 
   deploy:
     name: Deploy to server
